@@ -3,17 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weather Dashboard</title>
+<title>Singapore Weather Dashboard</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #0078d4;
+}
+</style>
 </head>
 <body>
 
-<h1>Singapore Weather Dashboard</h1>
+<h1>🌤 Singapore Weather Dashboard</h1>
 
-<p id="status">Loading...</p>
+<div class="card">
+    <h2>☁ 2-Hour Forecast</h2>
+    <div id="forecast">Loading...</div>
+</div>
 
 <script>
-document.getElementById("status").innerHTML =
-  "JavaScript is working ✅";
+
+async function loadForecast() {
+
+    try {
+
+        const response = await fetch(
+            "https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast"
+        );
+
+        const data = await response.json();
+
+        const forecasts =
+            data.data.items[0].forecasts;
+
+        let html = "";
+
+        forecasts.slice(0, 10).forEach(area => {
+
+            html += `
+                <p>
+                    <strong>${area.area}:</strong>
+                    ${area.forecast}
+                </p>
+            `;
+        });
+
+        document.getElementById("forecast").innerHTML =
+            html;
+
+    } catch(error) {
+
+        document.getElementById("forecast").innerHTML =
+            "Error: " + error.message;
+
+        console.error(error);
+    }
+
+}
+
+loadForecast();
+
 </script>
 
 </body>
