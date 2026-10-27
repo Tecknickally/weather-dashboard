@@ -43,10 +43,22 @@ async function loadForecast() {
 
         const data = await response.json();
 
-        document.getElementById("forecast").innerHTML =
-            "API connected successfully ✅";
+        const forecast =
+            data.data.items[0].forecasts[0];
+
+        document.getElementById("forecast").innerHTML = `
+            <h3>${forecast.area}</h3>
+            <p>${forecast.forecast}</p>
+        `;
     }
     catch(error) {
+        document.getElementById("forecast").innerHTML =
+            "Unable to load weather data";
+    }
+}
+
+loadForecast();
+</script>
         document.getElementById("forecast").innerHTML =
             "Error: " + error.message;
     }
