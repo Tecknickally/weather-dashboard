@@ -179,23 +179,19 @@ async function loadForecast() {
 
         const data = await response.json();
 
-        const forecasts =
-            data.data.records || [];
+        console.log("Forecast API Response:", data);
 
-        let html = "";
+        document.getElementById("forecast5").innerHTML =
+            "<pre>" +
+            JSON.stringify(data, null, 2) +
+            "</pre>";
 
-        forecasts.forEach(item => {
+    } catch(err){
 
-            html += `
-            <div class="forecast-card">
-                <strong>${item.date || ""}</strong><br>
-                ${item.forecast || ""}<br>
-                🌡 ${item.temperature?.low || "-"}°C
-                -
-                ${item.temperature?.high || "-"}°C
-            </div>
-            `;
-        });
+        document.getElementById("forecast5").innerHTML =
+            "Forecast Error: " + err.message;
+    }
+}
 
         document.getElementById("forecast5").innerHTML =
             html || "No forecast available";
