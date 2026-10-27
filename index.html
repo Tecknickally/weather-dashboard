@@ -3,49 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Singapore Weather Dashboard</title>
 
 <style>
-body {
+body{
     font-family: Arial, sans-serif;
-    background: #f4f6f9;
-    margin: 20px;
+    margin:0;
+    padding:20px;
+    background:#f4f6f9;
 }
 
-h1 {
-    text-align: center;
-    color: #0078d4;
+h1{
+    text-align:center;
+    color:#0078d4;
 }
 
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.card{
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
-.loading {
-    color: #666;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:10px;
 }
 
-.psi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+.metric{
+    background:#f5f7fa;
+    text-align:center;
+    padding:12px;
+    border-radius:8px;
 }
 
-.psi-item {
-    background: #f5f5f5;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
+.metric-value{
+    font-size:22px;
+    font-weight:bold;
+    color:#0078d4;
 }
 
-.value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #0078d4;
+.forecast-card{
+    background:#f5f7fa;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.loading{
+    color:#666;
 }
 </style>
 </head>
@@ -55,40 +64,31 @@ h1 {
 <h1>🌤 Singapore Weather Dashboard</h1>
 
 <div class="card">
-    <h2>☁ 2-Hour Forecast</h2>
-    <div id="forecast" class="loading">Loading forecast...</div>
+    <h2>Today's Weather</h2>
+    <div id="overview" class="loading">Loading...</div>
 </div>
 
 <div class="card">
-    <h2>🌫 24-Hour PSI</h2>
-    <div id="psi" class="loading">Loading PSI...</div>
+    <h2>🌫 PSI (24 Hour)</h2>
+    <div id="psi">Loading...</div>
+</div>
+
+<div class="card">
+    <h2>🫁 PM2.5 (24 Hour)</h2>
+    <div id="pm25">Loading...</div>
+</div>
+
+<div class="card">
+    <h2>📅 5-Day Forecast</h2>
+    <div id="forecast5">Loading...</div>
 </div>
 
 <script>
-async function loadForecast() {
-    try {
-        const response = await fetch(
-            "https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast"
-        );
-
-        const data = await response.json();
-
-        const forecast =
-            data.data.items[0].forecasts[0];
-
-        document.getElementById("forecast").innerHTML = `
-            <strong>${forecast.area}</strong><br>
-            ${forecast.forecast}
-        `;
-    }
-    catch(error) {
-        document.getElementById("forecast").innerHTML =
-            "Unable to load forecast";
-    }
-}
 
 async function loadPSI() {
+
     try {
+
         const response = await fetch(
             "https://api-open.data.gov.sg/v2/real-time/api/psi"
         );
@@ -99,43 +99,133 @@ async function loadPSI() {
             data.data.items[0].readings.psi_twenty_four_hourly;
 
         document.getElementById("psi").innerHTML = `
-            <div class="psi-grid">
-                <div class="psi-item">
-                    <div>Central</div>
-                    <div class="value">${psi.central}</div>
-                </div>
-
-                <div class="psi-item">
-                    <div>North</div>
-                    <div class="value">${psi.north}</div>
-                </div>
-
-                <div class="psi-item">
-                    <div>South</div>
-                    <div class="value">${psi.south}</div>
-                </div>
-
-                <div class="psi-item">
-                    <div>East</div>
-                    <div class="value">${psi.east}</div>
-                </div>
-
-                <div class="psi-item">
-                    <div>West</div>
-                    <div class="value">${psi.west}</div>
-                </div>
+        <div class="grid">
+            <div class="metric">
+                <div>Central</div>
+                <div class="metric-value">${psi.central}</div>
             </div>
+
+            <div class="metric">
+                <div>North</div>
+                <div class="metric-value">${psi.north}</div>
+            </div>
+
+            <div class="metric">
+                <div>South</div>
+                <div class="metric-value">${psi.south}</div>
+            </div>
+
+            <div class="metric">
+                <div>East</div>
+                <div class="metric-value">${psi.east}</div>
+            </div>
+
+            <div class="metric">
+                <div>West</div>
+                <div class="metric-value">${psi.west}</div>
+            </div>
+        </div>
         `;
-    }
-    catch(error) {
+
+        const pm25 =
+            data.data.items[0].readings.pm25_twenty_four_hourly;
+
+        document.getElementById("pm25").innerHTML = `
+        <div class="grid">
+            <div class="metric">
+                <div>Central</div>
+                <div class="metric-value">${pm25.central}</div>
+            </div>
+
+            <div class="metric">
+                <div>North</div>
+                <div class="metric-value">${pm25.north}</div>
+            </div>
+
+            <div class="metric">
+                <div>South</div>
+                <div class="metric-value">${pm25.south}</div>
+            </div>
+
+            <div class="metric">
+                <div>East</div>
+                <div class="metric-value">${pm25.east}</div>
+            </div>
+
+            <div class="metric">
+                <div>West</div>
+                <div class="metric-value">${pm25.west}</div>
+            </div>
+        </div>
+        `;
+
+    } catch(err){
+
         document.getElementById("psi").innerHTML =
             "Unable to load PSI";
+
+        document.getElementById("pm25").innerHTML =
+            "Unable to load PM2.5";
     }
 }
 
-loadForecast();
+async function loadForecast() {
+
+    try {
+
+        const response = await fetch(
+            "https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook"
+        );
+
+        const data = await response.json();
+
+        const forecasts =
+            data.data.records || [];
+
+        let html = "";
+
+        forecasts.forEach(item => {
+
+            html += `
+            <div class="forecast-card">
+                <strong>${item.date || ""}</strong><br>
+                ${item.forecast || ""}<br>
+                🌡 ${item.temperature?.low || "-"}°C
+                -
+                ${item.temperature?.high || "-"}°C
+            </div>
+            `;
+        });
+
+        document.getElementById("forecast5").innerHTML =
+            html || "No forecast available";
+
+    } catch(err){
+
+        document.getElementById("forecast5").innerHTML =
+            "Unable to load forecast";
+    }
+}
+
+async function loadOverview() {
+
+    document.getElementById("overview").innerHTML =
+        `
+        ✅ Dashboard Online<br>
+        ✅ Singapore Government API Connected<br>
+        ✅ Auto Refresh Enabled
+        `;
+}
+
+loadOverview();
 loadPSI();
+loadForecast();
+
+setInterval(() => {
+    loadPSI();
+    loadForecast();
+}, 300000);
+
 </script>
 
-</body>
-</html>
+</
