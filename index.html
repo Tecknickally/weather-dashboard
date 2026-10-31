@@ -90,10 +90,11 @@ async function loadTemperature() {
 
         const data = await response.json();
 
-        console.log ("Temperature API:", data);
-            
-        document.getElementById("temperature").innerHTML =
-            "Temperature data received";
+        const reading =
+             data.data.readings[0];
+
+    document.getElementById("temperature").innerHTML =
+            reading.value + " °C";
 
     } catch (error) {
 
@@ -114,8 +115,11 @@ async function loadRainfall() {
 
         const data = await response.json();
 
-        document.getElementById("rainfall").innerHTML =
-            "Rainfall data available";
+        const rainfall =
+            data.data.readings[0];
+
+    document.getElementById("rainfall").innerHTML =
+            rainfall.value + " mm";
 
     } catch(error) {
 
@@ -166,12 +170,24 @@ async function loadForecast() {
 
         const data = await response.json();
 
-        console.log("Forecast API:", data);
+        const forecasts =
+            data.data.records[0].forecasts;
+
+        let html = "";
+
+        forecasts.forEach(day => {
+
+            html += `
+                <div class="forecast-day">
+                    <strong>${day.date}</strong><br>
+                    ${day.forecast.text}<br>
+                    🌡️ ${day.temperature.low}°C - ${day.temperature.high}°C
+                </div>
+            `;
+        });
 
         document.getElementById("forecast4").innerHTML =
-            "<pre>" +
-            JSON.stringify(data, null, 2) +
-            "</pre>";
+            html;
 
     } catch (error) {
 
