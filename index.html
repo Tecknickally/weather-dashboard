@@ -90,18 +90,13 @@ async function loadTemperature() {
 
         const data = await response.json();
 
-        const reading =
-             data.data.readings[0];
-
-    document.getElementById("temperature").innerHTML =
-            reading.value + " °C";
-
-    } catch (error) {
-
-        console.error(error);
-        
         document.getElementById("temperature").innerHTML =
-            "Unavailable";
+            "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+
+    } catch(error) {
+
+        document.getElementById("temperature").innerHTML =
+            error.message;
     }
 }
 
@@ -140,23 +135,15 @@ async function loadRainfall() {
 
         const data = await response.json();
 
-       console.log("PSI API:", data);
+    document.getElementById("psi").innerHTML =
+            "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+
+        document.getElementById("pm25").innerHTML = "";
+
+    } catch(error) {
 
         document.getElementById("psi").innerHTML =
-            "PSI data received";
-
-        document.getElementById("pm25").innerHTML =
-            "PM2.5 data received";
-
-    } catch (error) {
-
-        console.error(error);
-
-        document.getElementById("psi").innerHTML =
-            "Unavailable";
-
-        document.getElementById("pm25").innerHTML =
-            "Unavailable";
+            error.message;
     }
 }
 
