@@ -136,23 +136,23 @@ async function loadRainfall() {
 
         const data = await response.json();
 
-        const region =
-            data.data.items[0].readings.psi_twenty_four_hourly;
-
-        const pm25 =
-            data.data.items[0].readings.pm25_twenty_four_hourly;
+       console.log("PSI API:", data);
 
         document.getElementById("psi").innerHTML =
-            region.national;
+            "PSI data received";
 
         document.getElementById("pm25").innerHTML =
-            pm25.national + " µg/m³";
+            "PM2.5 data received";
 
-    } catch(error) {
+    } catch (error) {
 
-        document.getElementById("psi").innerHTML = "Unavailable";
-        
-        document.getElementById("pm25").innerHTML = "Unavailable";
+        console.error(error);
+
+        document.getElementById("psi").innerHTML =
+            "Unavailable";
+
+        document.getElementById("pm25").innerHTML =
+            "Unavailable";
     }
 }
 
