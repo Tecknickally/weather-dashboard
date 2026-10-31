@@ -12,17 +12,32 @@ body {
     padding: 20px;
 }
 
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
 h1 {
-    color: #0078d4;
+color: #0078d4;
+text-align: center;
 }
+ 
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+gap: 20px;
+margin-bottom: 20px;
+}
+ 
+.card {
+background: white;
+border-radius: 12px;
+padding: 20px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+ 
+.forecast-day {
+padding: 15px;
+margin-bottom: 10px;
+background: #f8f9fa;
+border-radius: 10px;
+}
+    
 </style>
 
 </head>
@@ -37,6 +52,80 @@ h1 {
 
 <script>
 
+async function loadTemperature() {
+
+    try {
+
+        const response = await fetch(
+            "https://api-open.data.gov.sg/v2/real-time/api/air-temperature"
+        );
+
+        const data = await response.json();
+
+        const temps =
+            data.data.readings;
+
+        const latest = temps[temps.length - 1];
+
+        document.getElementById("temperature").innerHTML =
+            `${latest.value} °C`;
+
+    } catch (error) {
+
+        document.getElementById("temperature").innerHTML =
+            "Unavailable";
+    }
+}
+
+async function loadPSI() {
+
+    try {
+
+        const response = await fetch(
+            "https://api-open.data.gov.sg/v2/real-time/api/psi"
+        );
+
+        const data = await response.json();
+
+        const region =
+            data.data.items[0].readings.psi_twenty_four_hourly;
+
+        const pm25 =
+            data.data.items[0].readings.pm25_twenty_four_hourly;
+
+        document.getElementById("psi").innerHTML =
+            region.national;
+
+        document.getElementById("pm25").innerHTML =
+            pm25.national + " µg/m³";
+
+    } catch(error) {
+
+        document.getElementById("psi").innerHTML = "Unavailable";
+        document.getElementById("pm25").innerHTML = "Unavailable";
+    }
+}
+
+async function loadRainfall() {
+
+    try {
+
+        const response = await fetch(
+            "https://api-open.data.gov.sg/v2/real-time/api/rainfall"
+        );
+
+        const data = await response.json();
+
+        document.getElementById("rainfall").innerHTML =
+            "Live rainfall data available";
+
+    } catch(error) {
+
+        document.getElementById("rainfall").innerHTML =
+            "Unavailable";
+    }
+}    
+    
 async function loadForecast() {
 
     try {
@@ -78,6 +167,9 @@ async function loadForecast() {
     }
 }
 
+loadTemperature();
+loadRainfall();
+loadPSI();
 loadForecast();
 
 </script>
