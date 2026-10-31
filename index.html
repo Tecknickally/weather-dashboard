@@ -24,18 +24,20 @@ h1 {
     color: #0078d4;
 }
 </style>
+
 </head>
 <body>
 
 <h1>🌤 Singapore Weather Dashboard</h1>
 
 <div class="card">
-    <h2>☁ 2-Hour Forecast</h2>
-    <div id="forecast">Loading...</div>
+    <h2>📅 4-Day Forecast</h2>
+    <div id="forecast5">Loading...</div>
 </div>
 
-</script>
-async function load5DayForecast() {
+<script>
+
+async function loadForecast() {
 
     try {
 
@@ -45,10 +47,12 @@ async function load5DayForecast() {
 
         const data = await response.json();
 
-        const forecasts =
-            data.data.records[0].periods;
+        console.log(data);
 
         let html = "";
+
+        const forecasts =
+            data.data.records[0].periods;
 
         forecasts.forEach(day => {
 
@@ -56,28 +60,27 @@ async function load5DayForecast() {
                 <p>
                     <strong>${day.date}</strong><br>
                     ${day.forecast}<br>
-                    🌡️ ${day.temperature.low}°C - ${day.temperature.high}°C
+                    🌡️ ${day.temperature.low}°C -
+                    ${day.temperature.high}°C
                 </p>
                 <hr>
             `;
         });
 
-        document.getElementById("forecast5").innerHTML =
-            html;
+        document.getElementById("forecast5").innerHTML = html;
 
-    } catch(error) {
+    } catch (error) {
+
+        console.error(error);
 
         document.getElementById("forecast5").innerHTML =
             "Unable to load forecast";
-
-        console.error(error);
     }
-
 }
 
 loadForecast();
-load5DayForecast();
 
+</script>
 
 </body>
 </html>
